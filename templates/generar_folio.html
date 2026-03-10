@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Page header -->
+<div class="page-header">
+  <div class="page-label"><i class="bi bi-plus-circle-fill"></i> Nuevo registro</div>
+  <div class="page-title">Generador de Folios</div>
+  <div class="page-desc">Completa los campos para generar un folio oficial</div>
+</div>
+
+{% if error %}
+<div style="
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: 12px; padding: 0.85rem 1.1rem;
+  color: #dc2626; font-size: 0.88rem;
+  display: flex; align-items: center; gap: 0.6rem;
+  margin-bottom: 1.25rem;">
+  <i class="bi bi-exclamation-circle-fill" style="flex-shrink:0;"></i>
+  {{ error }}
+</div>
+{% endif %}
+
+<!-- Card principal -->
+<div class="card-custom">
+  <div class="card-header-custom">
+    <div class="card-header-icon"><i class="bi bi-file-earmark-plus"></i></div>
+    <div>
+      <p class="card-header-title">Nuevo Folio</p>
+      <p class="card-header-sub">Todos los campos marcados son obligatorios</p>
+    </div>
+  </div>
+
+  <div class="card-body-custom">
+    <form action="/guardar" method="post">
+
+      <!-- TIPO DOCUMENTO -->
+      <div class="form-section">
+        <div class="form-section-title"><i class="bi bi-tag"></i> Tipo de documento</div>
+        <div class="tipo-selector">
+          <div class="tipo-option">
+            <input type="radio" name="tipo_doc" id="tipo_proy" value="PROYECCIONES" checked>
+            <label class="tipo-label" for="tipo_proy">
+              <i class="bi bi-bar-chart-line"></i>
+              <span>Proyecciones</span>
+            </label>
+          </div>
+          <div class="tipo-option">
+            <input type="radio" name="tipo_doc" id="tipo_atr" value="ATTRAPI">
+            <label class="tipo-label" for="tipo_atr">
+              <i class="bi bi-train-front"></i>
+              <span>ATTRAPI</span>
+            </label>
+          </div>
+          <div class="tipo-option">
+            <input type="radio" name="tipo_doc" id="tipo_ies" value="IES">
+            <label class="tipo-label" for="tipo_ies">
+              <i class="bi bi-lightning-charge"></i>
+              <span>Instrucciones Especiales</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATOS GENERALES -->
+      <div class="form-section">
+        <div class="form-section-title"><i class="bi bi-info-circle"></i> Datos generales</div>
+        <div class="form-row">
+
+          <div class="form-group">
+            <label class="form-label-custom">Fecha</label>
+            <input type="date" name="fecha" id="campo_fecha" class="form-control-custom" required>
+          </div>
+
+          <!-- Dependencia normal (PROYECCIONES / ATTRAPI) -->
+          <div class="form-group" id="campo_dependencia">
+            <label class="form-label-custom">Dependencia</label>
+            <div class="select-wrapper">
+            <select name="dependencia" id="select_dependencia" class="form-select-custom" required>
+
+              <option value="DG">Dirección General</option>
+              <option value="DCS">Dirección de Comunicación Social</option>
+              <option value="DT">Dirección Técnica</option>
+              <option value="DCI">Dirección de Control Interno</option>
+
+              <option value="UAI">Unidad de Administración de Infraestructura</option>
+              <option value="MIF">Coordinación General de Mantenimiento de Infraestructura Ferroviaria</option>
+              <option value="MSF">Coordinación General de Mantenimiento de Sistemas Ferroviarios</option>
+              <option value="SCF">Coordinación General de Seguridad y Circulación Ferroviaria</option>
+              <option value="GIF">Coordinación General de Gestión de Infraestructura Ferroviaria</option>
+
+              <option value="UOTF">Unidad de Operación de Transporte Ferroviario</option>
+              <option value="OFP">Coordinación General de Operación Ferroviaria de Pasajeros</option>
+              <option value="OFC">Coordinación General de Operaciones y Servicios Ferroviarios de Carga</option>
+              <option value="MEF">Coordinación General de Mantenimiento de Equipo Ferroviario</option>
+
+              <option value="UAF">Unidad de Administración y Finanzas</option>
+              <option value="CMZ">Coordinación General de Comercialización de Servicios Ferroviarios</option>
+              <option value="CGF">Coordinación General de Finanzas</option>
+              <option value="RRHH">Coordinación General de Recursos Humanos</option>
+              <option value="RRMM">Coordinación General de Recursos Materiales y Servicios Generales</option>
+
+              <option value="TICS">Coordinación General de Tecnologías de la Información</option>
+
+              <!-- NUEVAS -->
+              <option value="UECC">Unidad de Estrategia Corporativa y Comercial</option>
+              <option value="UAJT">Unidad de Asuntos Jurídicos, Transparencia y Órgano Interno de Control</option>
+              <option value="CEC">Coordinación General de Estrategia Corporativa</option>
+              <option value="JCC">Coordinación General Jurídico Contencioso</option>
+              <option value="JCO">Coordinación General Jurídico Consultivo</option>
+
+              <option value="ALSTOM">Consorcio ALSTOM</option>
+
+            </select>
+
+            </div>
+          </div>
+
+          <!-- Dependencia fija IES -->
+          <div class="form-group" id="campo_dependencia_ies" style="display:none;">
+            <label class="form-label-custom">Dependencia</label>
+            <input type="text" name="dependencia" class="form-control-custom"
+                   value="ÁREAS OPERATIVAS" readonly>
+          </div>
+
+        </div>
+
+        <div class="form-row">
+
+          <!-- Personal elabora: todos los tipos -->
+          <div class="form-group" id="campo_elabora_normal">
+            <label class="form-label-custom">Personal que elabora</label>
+            <div class="select-wrapper">
+              <select name="personal_elabora" id="select_elabora_normal" class="form-select-custom" required>
+                <option>Ing. Alejandro Guzmán</option>
+                <option>Ing. Moisés Valencia</option>
+                <option>Ing. Joahan González</option>
+                <option>Ing. Franklin Can</option>
+                <option>Ing. Bryan Nuñez</option>
+                <option>Ing. Natalia Graniel</option>
+                <option>Mtro. Miguel Ángel López</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Personal elabora: solo IES -->
+          <div class="form-group" id="campo_elabora_ies" style="display:none;">
+            <label class="form-label-custom">Personal que elabora</label>
+            <div class="select-wrapper">
+              <select name="personal_elabora" id="select_elabora_ies" class="form-select-custom">
+                <option>Ing. Franklin Can</option>
+                <option>Ing. Joahan González</option>
+                <option>Ing. Guillermo Soto</option>
+                <option>Ing. Moisés Valencia</option>
+
+              </select>
+            </div>
+          </div>
+
+          <!-- Persona firma: todos los tipos -->
+          <div class="form-group">
+            <label class="form-label-custom">Persona que firma</label>
+            <div class="select-wrapper">
+              <select name="persona_firma" class="form-select-custom" required>
+                <option>Ing. Moisés Valencia</option>
+                <option>Mtro. Miguel Ángel López</option>
+                <option>Ing. Alejandro Guzmán</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SOLICITUD -->
+      <div class="form-section">
+        <div class="form-section-title"><i class="bi bi-send"></i> Solicitud</div>
+
+        <div class="form-row">
+          <!-- Tipo solicitud (oculto en IES) -->
+          <div class="form-group" id="campo_tipo_solicitud">
+            <label class="form-label-custom">Tipo de solicitud</label>
+            <div class="select-wrapper">
+              <select name="tipo_solicitud" id="tipo_solicitud" class="form-select-custom">
+                <option value="oficio">Oficio a responder</option>
+                <option value="verbal">Solicitud verbal</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" id="campo_destinatario">
+            <label class="form-label-custom">Destinatario</label>
+            <input type="text" name="persona_dirigida" class="form-control-custom"
+                   placeholder="Nombre o área destino">
+          </div>
+        </div>
+
+        <!-- Oficio -->
+        <div class="form-group" id="campo_oficio">
+          <label class="form-label-custom">Oficio a responder (link OneDrive)</label>
+          <input type="url" name="oficio_responder" class="form-control-custom"
+                 placeholder="https://onedrive.live.com/...">
+        </div>
+
+        <!-- Verbal -->
+        <div class="form-group" id="campo_verbal" style="display:none;">
+          <label class="form-label-custom">Nombre del solicitante</label>
+          <input type="text" name="quien_solicita" class="form-control-custom"
+                 placeholder="Nombre de quien solicita">
+        </div>
+        <div class="form-group" id="campo_aprueba" style="display:none;">
+          <label class="form-label-custom">Aprobado por</label>
+          <div class="select-wrapper">
+            <select name="quien_aprueba" class="form-select-custom">
+              <option value="Ing. Moisés Valencia">Ing. Moisés Valencia</option>
+              <option value="Ing. Alejandro Guzmán">Ing. Alejandro Guzmán</option>
+              <option value="Mtro. Miguel Ángel López">Mtro. Miguel Ángel López</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label-custom">Asunto</label>
+          <textarea name="asunto" class="form-control-custom"
+                    placeholder="Describe el asunto del documento..." required></textarea>
+        </div>
+      </div>
+
+      <!-- BOTONES -->
+      <button type="submit" class="btn-generar">
+        <i class="bi bi-file-earmark-check-fill"></i>
+        Generar Folio Oficial
+      </button>
+
+    </form>
+
+    <a href="/" class="link-back">
+      <i class="bi bi-arrow-left"></i> Volver al menú principal
+    </a>
+
+  </div>
+</div>
+
+<script>
+  const radioBtns      = document.querySelectorAll('input[name="tipo_doc"]');
+  const tipoSolicitud  = document.getElementById('tipo_solicitud');
+  const campoDep       = document.getElementById('campo_dependencia');
+  const campoDepIes    = document.getElementById('campo_dependencia_ies');
+  const selectDep      = document.getElementById('select_dependencia');
+  const campoTipoSol   = document.getElementById('campo_tipo_solicitud');
+  const campoOficio    = document.getElementById('campo_oficio');
+  const campoVerbal    = document.getElementById('campo_verbal');
+  const campoAprueba   = document.getElementById('campo_aprueba');
+  const campoFecha     = document.getElementById('campo_fecha');
+
+  const campoElaboraNormal = document.getElementById('campo_elabora_normal');
+  const campoElaboraIes    = document.getElementById('campo_elabora_ies');
+  const selectElaboraNormal = document.getElementById('select_elabora_normal');
+  const campoDestinatario   = document.getElementById('campo_destinatario'); 
+
+  const hoy = new Date().toISOString().split('T')[0];
+  campoFecha.value = hoy;
+
+  function getTipo() {
+    return document.querySelector('input[name="tipo_doc"]:checked').value;
+  }
+
+function actualizarFecha() {
+  campoFecha.setAttribute('min', hoy);
+  if (campoFecha.value < hoy) campoFecha.value = hoy;
+}
+
+  function actualizarCampos() {
+    const tipo = getTipo();
+    actualizarFecha();
+   if (tipo === 'IES') {
+      // Dependencia
+      campoDep.style.display    = 'none';
+      selectDep.disabled        = true;
+      campoDepIes.style.display = 'block';
+      // Solicitud
+      campoTipoSol.style.display  = 'none';
+      campoOficio.style.display   = 'none';
+      campoVerbal.style.display   = 'none';
+      campoAprueba.style.display  = 'none';
+      campoDestinatario.style.display = 'none';  
+      // Personal elabora
+      campoElaboraNormal.style.display  = 'none';
+      selectElaboraNormal.disabled      = true;
+      campoElaboraIes.style.display     = 'block';
+    } else {
+      // Dependencia
+      campoDep.style.display    = 'block';
+      selectDep.disabled        = false;
+      campoDepIes.style.display = 'none';
+      // Solicitud
+      campoTipoSol.style.display      = 'block';
+      campoDestinatario.style.display = 'block';  
+      actualizarSolicitud();
+      // Personal elabora
+      campoElaboraNormal.style.display  = 'block';
+      selectElaboraNormal.disabled      = false;
+      campoElaboraIes.style.display     = 'none';
+    }
+  }
+
+  function actualizarSolicitud() {
+    if (tipoSolicitud.value === 'oficio') {
+      campoOficio.style.display  = 'block';
+      campoVerbal.style.display  = 'none';
+      campoAprueba.style.display = 'none';
+    } else {
+      campoOficio.style.display  = 'none';
+      campoVerbal.style.display  = 'block';
+      campoAprueba.style.display = 'block';
+    }
+  }
+
+  radioBtns.forEach(r => r.addEventListener('change', actualizarCampos));
+  tipoSolicitud.addEventListener('change', actualizarSolicitud);
+  actualizarCampos();
+  actualizarCampos();
+</script>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - SECRET_KEY=cambia_esto_por_una_clave_segura
+    restart: always
+
+  

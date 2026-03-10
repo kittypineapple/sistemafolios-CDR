@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Page header -->
+<div class="page-header">
+  <div class="page-label"><i class="bi bi-clipboard-data"></i> Administración</div>
+  <div class="page-title">Historial de Auditoría</div>
+  <div class="page-desc">{{ registros|length }} registro(s) en el sistema</div>
+</div>
+
+<div class="card-custom" style="margin-bottom: 1.25rem;">
+  <div class="card-header-custom">
+    <div class="card-header-icon"><i class="bi bi-shield-check"></i></div>
+    <div>
+      <p class="card-header-title">Registro de actividad</p>
+      <p class="card-header-sub">Todas las acciones realizadas en el sistema</p>
+    </div>
+  </div>
+
+  {% if registros %}
+  <div class="table-responsive">
+    <table class="aud-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in registros %}
+        <tr class="aud-fila">
+          <td class="aud-fecha">{{ r['fecha'] }}</td>
+          <td class="aud-usuario">{{ r['usuario'] }}</td>
+          <td>
+            {% if r['accion'] == 'LOGIN' %}
+              <span class="aud-badge aud-verde">LOGIN</span>
+            {% elif r['accion'] == 'LOGOUT' %}
+              <span class="aud-badge aud-gris">LOGOUT</span>
+            {% elif r['accion'] == 'GENERAR_FOLIO' %}
+              <span class="aud-badge aud-azul">GENERAR FOLIO</span>
+            {% elif r['accion'] == 'ACTUALIZAR_VERSION' %}
+              <span class="aud-badge aud-ambar">ACTUALIZAR VERSIÓN</span>
+            {% elif r['accion'] == 'CARGAR_LINK' %}
+              <span class="aud-badge aud-cyan">CARGAR LINK</span>
+            {% elif r['accion'] == 'CREAR_USUARIO' %}
+              <span class="aud-badge aud-morado">CREAR USUARIO</span>
+            {% elif r['accion'] == 'ELIMINAR_USUARIO' %}
+              <span class="aud-badge aud-rojo">ELIMINAR USUARIO</span>
+            {% elif r['accion'] == 'TOGGLE_USUARIO' %}
+              <span class="aud-badge aud-gris">TOGGLE USUARIO</span>
+            {% elif r['accion'] == 'TOGGLE_SUPERVISOR' %}
+              <span class="aud-badge aud-ambar">TOGGLE SUPERVISOR</span>
+            {% else %}
+              <span class="aud-badge aud-gris">{{ r['accion'] }}</span>
+            {% endif %}
+          </td>
+          <td class="aud-detalle">{{ r['detalle'] or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% else %}
+  <div class="card-body-custom" style="text-align:center; padding: 3rem 1.75rem;">
+    <div style="width:56px;height:56px;margin:0 auto 1rem;background:rgba(90,122,110,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#5a7a6e;">
+      <i class="bi bi-clipboard-x"></i>
+    </div>
+    <div style="font-size:0.9rem;font-weight:600;color:#1a2e26;margin-bottom:0.3rem;">Sin registros</div>
+    <div style="font-size:0.8rem;color:#8aaa9a;">No hay actividad registrada todavía</div>
+  </div>
+  {% endif %}
+
+</div>
+
+<a href="/" class="link-back">
+  <i class="bi bi-arrow-left"></i> Volver al menú
+</a>
+
+<style>
+  .aud-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .aud-table thead tr {
+    background: #f7faf9;
+    border-bottom: 2px solid #e8f0ec;
+  }
+
+  .aud-table thead th {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5a7a6e;
+    white-space: nowrap;
+  }
+
+  .aud-fila {
+    border-bottom: 1px solid #f0f4f2;
+    transition: background 0.15s;
+  }
+
+  .aud-fila:last-child { border-bottom: none; }
+  .aud-fila:hover { background: #f7faf9; }
+
+  .aud-fila td {
+    padding: 0.8rem 1.25rem;
+    vertical-align: top;
+  }
+
+  .aud-fecha {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.76rem;
+    color: #8aaa9a;
+    white-space: nowrap;
+  }
+
+  .aud-usuario {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1a2e26;
+    white-space: nowrap;
+  }
+
+  .aud-detalle {
+    font-size: 0.82rem;
+    color: #5a7a6e;
+    max-width: 320px;
+    word-break: break-word;
+  }
+
+  .aud-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 0.2rem 0.55rem;
+    white-space: nowrap;
+  }
+
+  .aud-verde  { color: #2ecc8f; background: rgba(46,204,143,0.1);  border: 1px solid rgba(46,204,143,0.25); }
+  .aud-azul   { color: #60a5fa; background: rgba(96,165,250,0.1);  border: 1px solid rgba(96,165,250,0.25); }
+  .aud-ambar  { color: #f59e0b; background: rgba(245,158,11,0.1);  border: 1px solid rgba(245,158,11,0.25); }
+  .aud-cyan   { color: #22d3ee; background: rgba(34,211,238,0.1);  border: 1px solid rgba(34,211,238,0.25); }
+  .aud-morado { color: #a78bfa; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.25); }
+  .aud-rojo   { color: #f87171; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25); }
+  .aud-gris   { color: #8aaa9a; background: rgba(90,122,110,0.08); border: 1px solid rgba(90,122,110,0.15); }
+</style>
+
+{% endblock %}

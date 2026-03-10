@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Sistema CDR — Iniciar Sesión</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Imagen de fondo */
+    .bg-image {
+      position: fixed;
+      inset: 0;
+      background-image: url("{{ url_for('static', filename='img/fondo_tm-tuq.png') }}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 0;
+    }
+
+    /* Overlay oscuro sobre la imagen */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(11, 61, 46, 0.82) 0%,
+        rgba(6, 25, 18, 0.88) 100%
+      );
+      z-index: 1;
+    }
+
+    /* Contenedor del formulario */
+    .login-wrapper {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 420px;
+      padding: 1.5rem;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    /* Card */
+    .login-card {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 24px;
+      box-shadow:
+        0 24px 64px rgba(0,0,0,0.35),
+        0 0 0 1px rgba(255,255,255,0.1);
+      overflow: hidden;
+    }
+
+    /* Header del card */
+    .login-card-header {
+      background: linear-gradient(135deg, #0b3d2e, #1e7d58);
+      padding: 2rem 2rem 1.75rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .login-card-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 20px;
+      background: rgba(255,255,255,0.97);
+      border-radius: 20px 20px 0 0;
+    }
+
+    .login-logo {
+      max-height: 70px;
+      width: auto;
+      object-fit: contain;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+    }
+
+    /* Body del card */
+    .login-card-body {
+      padding: 1.5rem 2rem 2rem;
+    }
+
+    .login-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0b3d2e;
+      margin-bottom: 0.2rem;
+      text-align: center;
+    }
+
+    .login-subtitle {
+      font-size: 0.78rem;
+      color: #8aaa9a;
+      text-align: center;
+      margin-bottom: 1.75rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* Labels */
+    .field-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #1a2e26;
+      margin-bottom: 0.4rem;
+    }
+
+    /* Inputs */
+    .field-input {
+      width: 100%;
+      padding: 0.65rem 0.95rem;
+      border: 1.5px solid #dce8e3;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: #1a2e26;
+      background: #f7faf9;
+      outline: none;
+      transition: all 0.2s;
+      appearance: none;
+    }
+
+    .field-input:focus {
+      border-color: #1e7d58;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(30,125,88,0.12);
+    }
+
+    .field-input::placeholder { color: #b0c4bc; }
+
+    /* Input group contraseña */
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap .field-input {
+      padding-right: 2.8rem;
+    }
+
+    .btn-eye {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #8aaa9a;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0;
+      transition: color 0.2s;
+    }
+
+    .btn-eye:hover { color: #1e7d58; }
+
+    /* Mensaje de error */
+    .error-msg {
+      background: rgba(220, 38, 38, 0.08);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+      border-radius: 10px;
+      color: #b91c1c;
+      font-size: 0.8rem;
+      padding: 0.6rem 0.9rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Botón ingresar */
+    .btn-ingresar {
+      width: 100%;
+      padding: 0.85rem;
+      background: linear-gradient(135deg, #145a42, #1e7d58);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.25s;
+      margin-top: 1.5rem;
+    }
+
+    .btn-ingresar:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(20,90,66,0.35);
+    }
+
+    /* Footer del card */
+    .login-footer {
+      text-align: center;
+      padding: 0 2rem 1.5rem;
+      font-size: 0.72rem;
+      color: #b0c4bc;
+      letter-spacing: 0.04em;
+    }
+
+    /* Animación */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fondo con imagen -->
+  <div class="bg-image"></div>
+  <div class="bg-overlay"></div>
+
+  <!-- Card de login -->
+  <div class="login-wrapper">
+    <div class="login-card">
+
+      <!-- Header con logo -->
+      <div class="login-card-header">
+        <img src="{{ url_for('static', filename='img/Logotipo_TM_H.png') }}"
+             class="login-logo" alt="Tren Maya">
+      </div>
+
+      <!-- Body -->
+      <div class="login-card-body">
+        <div class="login-title">Bienvenido</div>
+        <div class="login-subtitle">Sistema de Gestión de Folios · CDR</div>
+
+        {% if error %}
+        <div class="error-msg">
+          <i class="bi bi-exclamation-circle-fill"></i>
+          {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="post" autocomplete="off">
+
+          <div class="mb-3">
+            <label class="field-label">Usuario</label>
+            <input type="text" name="username" class="field-input"
+                   placeholder="Ingresa tu usuario" required autofocus>
+          </div>
+
+          <div class="mb-1">
+            <label class="field-label">Contraseña</label>
+            <div class="password-wrap">
+              <input type="password" name="password" id="password"
+                     class="field-input" placeholder="••••••••" required>
+              <button type="button" class="btn-eye" onclick="togglePassword()">
+                <i class="bi bi-eye" id="eyeIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-ingresar">
+            <i class="bi bi-box-arrow-in-right"></i>
+            Ingresar al Sistema
+          </button>
+
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="login-footer">
+        © 2026 Tren Maya · Capacidad de Red
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const input = document.getElementById('password');
+      const icon  = document.getElementById('eyeIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('bi-eye', 'bi-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('bi-eye-slash', 'bi-eye');
+      }
+    }
+  </script>
+
+</body>
+</html>

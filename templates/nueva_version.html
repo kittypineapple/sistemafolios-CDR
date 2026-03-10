@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width: 620px; margin: 0 auto;">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-label"><i class="bi bi-arrow-repeat"></i> Versiones</div>
+    <div class="page-title">Actualizar Versión</div>
+    <div class="page-desc">Busca un folio existente y genera una nueva versión</div>
+  </div>
+
+  {% if documento %}
+
+  <!-- ======= FORMULARIO DE NUEVA VERSIÓN ======= -->
+  <div class="card-custom">
+
+    <div class="card-header-custom">
+      <div class="card-header-icon"><i class="bi bi-arrow-repeat"></i></div>
+      <div>
+        <p class="card-header-title">Nueva versión</p>
+        <p class="card-header-sub">Folio base: <strong style="color:#fff; font-family:'DM Mono',monospace;">{{ documento['folio'] }}</strong></p>
+      </div>
+    </div>
+
+    <div class="card-body-custom">
+      <form action="/guardar_version" method="post" autocomplete="off">
+        <input type="hidden" name="folio_anterior" value="{{ documento['folio'] }}">
+
+        <!-- DATOS GENERALES -->
+        <div class="form-section">
+          <div class="form-section-title"><i class="bi bi-info-circle"></i> Datos generales</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label-custom">Fecha</label>
+              <input type="date" name="fecha" id="campo_fecha"
+                     class="form-control-custom"
+                     value="{{ documento['fecha'] }}" required>
+            </div>
+
+            {% if documento['tipo_doc'] == 'IES' %}
+            <div class="form-group">
+              <label class="form-label-custom">Dependencia</label>
+              <input type="text" name="dependencia" class="form-control-custom"
+                     value="ÁREAS OPERATIVAS" readonly>
+            </div>
+            {% else %}
+            <div class="form-group">
+              <label class="form-label-custom">Dependencia</label>
+              <div class="select-wrapper">
+                <select name="dependencia" class="form-select-custom" required>
+                    <!-- Direcciones -->
+                    <option value="DG"  {% if documento['dependencia'] == 'DG' %}selected{% endif %}>Dirección General</option>
+                    <option value="DCS" {% if documento['dependencia'] == 'DCS' %}selected{% endif %}>Dirección de Comunicación Social</option>
+                    <option value="DT"  {% if documento['dependencia'] == 'DT' %}selected{% endif %}>Dirección Técnica</option>
+
+                    <!-- Unidades -->
+                    <option value="UAF"  {% if documento['dependencia'] == 'UAF' %}selected{% endif %}>Unidad de Administración y Finanzas</option>
+                    <option value="UAI"  {% if documento['dependencia'] == 'UAI' %}selected{% endif %}>Unidad de Administración de Infraestructura</option>
+                    <option value="UECC" {% if documento['dependencia'] == 'UECC' %}selected{% endif %}>Unidad de Estrategia Corporativa y Comercial</option>
+                    <option value="UOTF" {% if documento['dependencia'] == 'UOTF' %}selected{% endif %}>Unidad de Operación de Transporte Ferroviario</option>
+
+                    <!-- Coordinaciones -->
+                    <option value="CMZ" {% if documento['dependencia'] == 'CMZ' %}selected{% endif %}>Coordinación General de Comercialización de Servicios Ferroviarios</option>
+                    <option value="CEC" {% if documento['dependencia'] == 'CEC' %}selected{% endif %}>Coordinación General de Estrategia Corporativa</option>
+                    <option value="CGF" {% if documento['dependencia'] == 'CGF' %}selected{% endif %}>Coordinación General de Finanzas</option>
+                    <option value="GIF" {% if documento['dependencia'] == 'GIF' %}selected{% endif %}>Coordinación General de Gestión de Infraestructura Ferroviaria</option>
+                    <option value="MEF" {% if documento['dependencia'] == 'MEF' %}selected{% endif %}>Coordinación General de Mantenimiento de Equipo Ferroviario</option>
+                    <option value="MIF" {% if documento['dependencia'] == 'MIF' %}selected{% endif %}>Coordinación General de Mantenimiento de Infraestructura Ferroviaria</option>
+                    <option value="MSF" {% if documento['dependencia'] == 'MSF' %}selected{% endif %}>Coordinación General de Mantenimiento de Sistemas Ferroviarios</option>
+                    <option value="OFP" {% if documento['dependencia'] == 'OFP' %}selected{% endif %}>Coordinación General de Operación Ferroviaria de Pasajeros</option>
+                    <option value="OFC" {% if documento['dependencia'] == 'OFC' %}selected{% endif %}>Coordinación General de Operaciones y Servicios Ferroviarios de Carga</option>
+                    <option value="RRHH" {% if documento['dependencia'] == 'RRHH' %}selected{% endif %}>Coordinación General de Recursos Humanos</option>
+                    <option value="RRMM" {% if documento['dependencia'] == 'RRMM' %}selected{% endif %}>Coordinación General de Recursos Materiales y Servicios Generales</option>
+                    <option value="SCF" {% if documento['dependencia'] == 'SCF' %}selected{% endif %}>Coordinación General de Seguridad y Circulación Ferroviaria</option>
+                    <option value="TICS" {% if documento['dependencia'] == 'TICS' %}selected{% endif %}>Coordinación General de Tecnologías de la Información</option>
+                    <!-- Externo -->
+                    <option value="ALSTOM" {% if documento['dependencia'] == 'ALSTOM' %}selected{% endif %}>Consorcio ALSTOM</option>
+
+                  </select>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label-custom">Personal que elabora</label>
+              <div class="select-wrapper">
+                <select name="personal_elabora" class="form-select-custom" required>
+                  <option {% if documento['personal_elabora'] == 'Ing. Alejandro Guzmán' %}selected{% endif %}>Ing. Alejandro Guzmán</option>
+                  <option {% if documento['personal_elabora'] == 'Ing. Moisés Valencia' %}selected{% endif %}>Ing. Moisés Valencia</option>
+                  <option {% if documento['personal_elabora'] == 'Ing. Joahan González' %}selected{% endif %}>Ing. Joahan González</option>
+                  <option {% if documento['personal_elabora'] == 'Ing. Franklin Can' %}selected{% endif %}>Ing. Franklin Can</option>
+                  <option {% if documento['personal_elabora'] == 'Ing. Bryan Nuñez' %}selected{% endif %}>Ing. Bryan Nuñez</option>
+                  <option {% if documento['personal_elabora'] == 'Ing. Natalia Graniel' %}selected{% endif %}>Ing. Natalia Graniel</option>
+                  <option {% if documento['personal_elabora'] == 'Mtro. Miguel Ángel López' %}selected{% endif %}>Mtro. Miguel Ángel López</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label-custom">Persona que firma</label>
+              <div class="select-wrapper">
+                <select name="persona_firma" class="form-select-custom" required>
+                  <option {% if documento['persona_firma'] == 'Mtro. Miguel Ángel López' %}selected{% endif %}>Mtro. Miguel Ángel López</option>
+                  <option {% if documento['persona_firma'] == 'Ing. Moisés Valencia' %}selected{% endif %}>Ing. Moisés Valencia</option>
+                  <option {% if documento['persona_firma'] == 'Ing. Alejandro Guzmán' %}selected{% endif %}>Ing. Alejandro Guzmán</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label-custom">Destinatario</label>
+            <input type="text" name="persona_dirigida" class="form-control-custom"
+                   value="{{ documento['persona_dirigida'] }}" required>
+          </div>
+        </div>
+
+        <!-- SOLICITUD (solo no-IES) -->
+        {% if documento['tipo_doc'] != 'IES' %}
+        <div class="form-section">
+          <div class="form-section-title"><i class="bi bi-send"></i> Solicitud</div>
+
+          <div class="form-group">
+            <label class="form-label-custom">Tipo de solicitud</label>
+            <div class="select-wrapper">
+              <select name="tipo_solicitud" id="tipo_solicitud" class="form-select-custom">
+                <option value="oficio" {% if documento['tipo_solicitud'] == 'oficio' %}selected{% endif %}>Oficio a responder</option>
+                <option value="verbal" {% if documento['tipo_solicitud'] == 'verbal' %}selected{% endif %}>Solicitud verbal</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" id="campo_oficio">
+            <label class="form-label-custom">Oficio a responder (link OneDrive)</label>
+            <input type="url" name="oficio_responder" class="form-control-custom"
+                   placeholder="https://onedrive.live.com/..."
+                   value="{{ documento['oficio_responder'] }}">
+          </div>
+
+          <div class="form-group" id="campo_verbal" style="display:none;">
+            <label class="form-label-custom">Nombre del solicitante</label>
+            <input type="text" name="quien_solicita" class="form-control-custom"
+                   value="{{ documento['quien_solicita'] }}"
+                   placeholder="Nombre de quien solicita">
+          </div>
+
+          <div class="form-group" id="campo_aprueba" style="display:none;">
+            <label class="form-label-custom">Aprobado por</label>
+            <div class="select-wrapper">
+              <select name="quien_aprueba" class="form-select-custom">
+                <option {% if documento['quien_aprueba'] == 'Ing. Moisés Valencia' %}selected{% endif %}>Ing. Moisés Valencia</option>
+                <option {% if documento['quien_aprueba'] == 'Ing. Alejandro Guzmán' %}selected{% endif %}>Ing. Alejandro Guzmán</option>
+                <option {% if documento['quien_aprueba'] == 'Mtro. Miguel Ángel López' %}selected{% endif %}>Mtro. Miguel Ángel López</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- ASUNTO -->
+        <div class="form-section">
+          <div class="form-section-title"><i class="bi bi-text-left"></i> Contenido</div>
+          <div class="form-group">
+            <label class="form-label-custom">Asunto</label>
+            <textarea name="asunto" class="form-control-custom" rows="3" required>{{ documento['asunto'] }}</textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-generar">
+          <i class="bi bi-check-circle"></i> Guardar nueva versión
+        </button>
+
+      </form>
+
+      <a href="/" class="link-back">
+        <i class="bi bi-arrow-left"></i> Volver al menú
+      </a>
+    </div>
+  </div>
+
+  {% else %}
+
+  <!-- ======= BUSCAR FOLIO ======= -->
+  <div class="card-custom">
+    <div class="card-header-custom">
+      <div class="card-header-icon"><i class="bi bi-search"></i></div>
+      <div>
+        <p class="card-header-title">Buscar folio</p>
+        <p class="card-header-sub">Ingresa el folio al que deseas agregar una versión</p>
+      </div>
+    </div>
+
+    <div class="card-body-custom">
+
+      {% if error %}
+      <div style="
+        background: rgba(248,113,113,0.08);
+        border: 1px solid rgba(248,113,113,0.2);
+        border-radius: 12px;
+        padding: 0.85rem 1rem;
+        color: #dc2626;
+        font-size: 0.85rem;
+        display: flex; align-items: center; gap: 0.6rem;
+        margin-bottom: 1.25rem;">
+        <i class="bi bi-exclamation-circle-fill" style="flex-shrink:0;"></i>
+        {{ error }}
+      </div>
+      {% endif %}
+
+      <form action="/form_nueva_version" method="post" autocomplete="off">
+        <div class="form-group">
+          <label class="form-label-custom">Número de folio</label>
+          <input type="text" name="folio" class="form-control-custom"
+                 placeholder="Ej: TM-IE-2025-082-V1" required autofocus>
+        </div>
+
+        <button type="submit" class="btn-generar">
+          <i class="bi bi-search"></i> Buscar folio
+        </button>
+      </form>
+
+      <a href="/" class="link-back">
+        <i class="bi bi-arrow-left"></i> Volver al menú
+      </a>
+    </div>
+  </div>
+
+  {% endif %}
+
+</div>
+
+{% if documento and documento['tipo_doc'] != 'IES' %}
+<script>
+  const tipoSolicitud = document.getElementById('tipo_solicitud');
+  const campoOficio   = document.getElementById('campo_oficio');
+  const campoVerbal   = document.getElementById('campo_verbal');
+  const campoAprueba  = document.getElementById('campo_aprueba');
+
+  function actualizarSolicitud() {
+    if (tipoSolicitud.value === 'oficio') {
+      campoOficio.style.display  = 'block';
+      campoVerbal.style.display  = 'none';
+      campoAprueba.style.display = 'none';
+    } else {
+      campoOficio.style.display  = 'none';
+      campoVerbal.style.display  = 'block';
+      campoAprueba.style.display = 'block';
+    }
+  }
+
+  tipoSolicitud.addEventListener('change', actualizarSolicitud);
+  actualizarSolicitud();
+
+  // Fecha: solo hoy en adelante
+  const campoFecha = document.getElementById('campo_fecha');
+  const hoy = new Date().toISOString().split('T')[0];
+  campoFecha.setAttribute('min', hoy);
+</script>
+{% endif %}
+
+{% endblock %}

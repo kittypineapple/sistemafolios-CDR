@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Page header -->
+<div class="page-header">
+  <div class="page-label"><i class="bi bi-list-ul"></i> Resultados</div>
+  <div class="page-title">Resultados de búsqueda</div>
+  <div class="page-desc">
+    {% if resultados %}
+      {{ resultados|length }} documento(s) encontrado(s)
+    {% else %}
+      No se encontraron resultados
+    {% endif %}
+  </div>
+</div>
+
+<div class="card-custom" style="margin-bottom: 1.25rem;">
+  <div class="card-header-custom">
+    <div class="card-header-icon"><i class="bi bi-folder2-open"></i></div>
+    <div>
+      <p class="card-header-title">Documentos encontrados</p>
+      <p class="card-header-sub">Haz clic en un folio para ver el detalle completo</p>
+    </div>
+  </div>
+
+  {% if resultados %}
+  <div class="table-responsive">
+    <table class="rl-table">
+      <thead>
+        <tr>
+          <th>Folio</th>
+          <th>Tipo</th>
+          <th>Dependencia</th>
+          <th>Fecha</th>
+          <th>Asunto</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in resultados %}
+        <tr onclick="window.location='/buscar_folio_get/{{ r['folio'] }}'" class="rl-fila">
+          <td class="rl-folio">
+            <a href="/buscar_folio_get/{{ r['folio'] }}" class="rl-folio-link">
+              {{ r['folio'] }}
+            </a>
+          </td>
+          <td>
+            <span class="rl-tipo
+              {% if r['tipo_doc'] == 'IES' %}rl-tipo-verde
+              {% elif r['tipo_doc'] == 'PROYECCIONES' %}rl-tipo-azul
+              {% else %}rl-tipo-ambar{% endif %}">
+              {{ r['tipo_doc'] }}
+            </span>
+          </td>
+          <td class="rl-dep">{{ r['dependencia'] }}</td>
+          <td class="rl-fecha">{{ r['fecha'] }}</td>
+          <td class="rl-asunto">{{ r['asunto'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% else %}
+  <div class="card-body-custom" style="text-align:center; padding: 3rem 1.75rem;">
+    <div style="width:56px;height:56px;margin:0 auto 1rem;background:rgba(90,122,110,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#5a7a6e;">
+      <i class="bi bi-search"></i>
+    </div>
+    <div style="font-size:0.9rem;font-weight:600;color:#1a2e26;margin-bottom:0.3rem;">Sin resultados</div>
+    <div style="font-size:0.8rem;color:#8aaa9a;">Intenta con otros términos de búsqueda</div>
+  </div>
+  {% endif %}
+
+</div>
+
+<a href="/consulta" class="link-back">
+  <i class="bi bi-arrow-left"></i> Volver a consulta
+</a>
+
+<style>
+  .rl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .rl-table thead tr {
+    background: #f7faf9;
+    border-bottom: 2px solid #e8f0ec;
+  }
+
+  .rl-table thead th {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5a7a6e;
+    white-space: nowrap;
+  }
+
+  .rl-fila {
+    border-bottom: 1px solid #f0f4f2;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .rl-fila:last-child { border-bottom: none; }
+  .rl-fila:hover { background: #f7faf9; }
+
+  .rl-fila td {
+    padding: 0.85rem 1.25rem;
+    vertical-align: top;
+  }
+
+  .rl-folio-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #145a42;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .rl-folio-link:hover { text-decoration: underline; }
+
+  .rl-tipo {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 0.15rem 0.5rem;
+    white-space: nowrap;
+  }
+
+  .rl-tipo-verde { color: #2ecc8f; background: rgba(46,204,143,0.1); border: 1px solid rgba(46,204,143,0.2); }
+  .rl-tipo-azul  { color: #60a5fa; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.2); }
+  .rl-tipo-ambar { color: #f59e0b; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); }
+
+  .rl-dep   { font-size: 0.8rem; color: #5a7a6e; white-space: nowrap; }
+  .rl-fecha { font-size: 0.8rem; color: #8aaa9a; white-space: nowrap; font-family: 'DM Mono', monospace; }
+  .rl-asunto { font-size: 0.82rem; color: #1a2e26; max-width: 280px; word-break: break-word; }
+
+  .link-back {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 0.5rem; width: 100%; margin-top: 0.85rem; padding: 0.65rem;
+    color: #145a42; text-decoration: none; font-size: 0.88rem; font-weight: 500;
+    border: 1.5px solid #dce8e3; border-radius: 12px;
+    background: #f7faf9; transition: all 0.2s;
+  }
+  .link-back:hover { background: #eaf3ef; border-color: #1e7d58; color: #1e7d58; }
+</style>
+
+{% endblock %}

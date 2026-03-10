@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Page header -->
+<div class="page-header" style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+  <div>
+    <div class="page-label"><i class="bi bi-people"></i> Administración</div>
+    <div class="page-title">Usuarios del Sistema</div>
+    <div class="page-desc">Gestiona roles, estado y accesos</div>
+  </div>
+  <a href="/admin/crear_usuario" class="btn-nuevo-usuario">
+    <i class="bi bi-person-plus-fill"></i> Nuevo usuario
+  </a>
+</div>
+
+{% if error %}
+<div class="error-inline" style="margin-bottom: 1.25rem;">
+  <i class="bi bi-exclamation-circle-fill"></i> {{ error }}
+</div>
+{% endif %}
+
+<div class="card-custom" style="margin-bottom: 1.25rem;">
+  <div class="card-header-custom">
+    <div class="card-header-icon"><i class="bi bi-people-fill"></i></div>
+    <div>
+      <p class="card-header-title">Lista de usuarios</p>
+      <p class="card-header-sub">{{ usuarios|length }} usuario(s) registrados</p>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="usr-table">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Rol</th>
+          <th>Supervisor</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in usuarios %}
+        <tr class="usr-fila">
+
+          <!-- Usuario -->
+          <td>
+            <div class="usr-nombre-wrap">
+              <div class="usr-avatar">{{ u['username'][0]|upper }}</div>
+              <span class="usr-nombre">{{ u['username'] }}</span>
+            </div>
+          </td>
+
+          <!-- Rol -->
+          <td>
+            <span class="usr-badge
+              {% if u['rol'] == 'admin' %}usr-badge-rojo
+              {% elif u['rol'] == 'operador' %}usr-badge-azul
+              {% elif u['rol'] == 'supervisor' %}usr-badge-ambar
+              {% else %}usr-badge-gris{% endif %}">
+              {{ u['rol'] }}
+            </span>
+          </td>
+
+          <!-- Supervisor -->
+          <td>
+            {% if u['supervisor'] == 1 %}
+              <span class="usr-badge usr-badge-ambar">
+                <i class="bi bi-star-fill"></i> Supervisor
+              </span>
+            {% else %}
+              <span class="usr-text-muted">—</span>
+            {% endif %}
+          </td>
+
+          <!-- Estado -->
+          <td>
+            {% if u['activo'] == 1 %}
+              <span class="usr-badge usr-badge-verde">
+                <i class="bi bi-circle-fill" style="font-size:0.5rem;"></i> Activo
+              </span>
+            {% else %}
+              <span class="usr-badge usr-badge-gris">
+                <i class="bi bi-circle" style="font-size:0.5rem;"></i> Inactivo
+              </span>
+            {% endif %}
+          </td>
+
+          <!-- Acciones -->
+          <td>
+            <div class="usr-acciones">
+
+              <!-- Activar/Desactivar -->
+              <form action="/admin/toggle_usuario/{{ u['id'] }}" method="post">
+                <button type="submit" class="usr-btn
+                  {% if u['activo'] == 1 %}usr-btn-gris{% else %}usr-btn-verde{% endif %}"
+                  title="{% if u['activo'] == 1 %}Desactivar{% else %}Activar{% endif %}">
+                  <i class="bi bi-{% if u['activo'] == 1 %}pause-circle{% else %}play-circle{% endif %}"></i>
+                  {% if u['activo'] == 1 %}Desactivar{% else %}Activar{% endif %}
+                </button>
+              </form>
+
+              <!-- Toggle supervisor -->
+              <form action="/admin/toggle_supervisor/{{ u['id'] }}" method="post">
+                <button type="submit" class="usr-btn usr-btn-ambar"
+                  title="{% if u['supervisor'] == 1 %}Quitar supervisor{% else %}Hacer supervisor{% endif %}">
+                  <i class="bi bi-star{% if u['supervisor'] == 1 %}-fill{% endif %}"></i>
+                  {% if u['supervisor'] == 1 %}Quitar{% else %}Supervisor{% endif %}
+                </button>
+              </form>
+
+              <!-- Eliminar -->
+              <form action="/admin/eliminar_usuario/{{ u['id'] }}" method="post"
+                    onsubmit="return confirm('¿Eliminar al usuario {{ u['username'] }}?')">
+                <button type="submit" class="usr-btn usr-btn-rojo" title="Eliminar usuario">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </form>
+
+            </div>
+          </td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<a href="/" class="link-back">
+  <i class="bi bi-arrow-left"></i> Volver al menú
+</a>
+
+<style>
+  .btn-nuevo-usuario {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.55rem 1.1rem;
+    background: linear-gradient(135deg, #145a42, #1e7d58);
+    border-radius: 10px; color: #fff;
+    font-size: 0.85rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-nuevo-usuario:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(20,90,66,0.3);
+    color: #fff;
+  }
+
+  .error-inline {
+    background: rgba(248,113,113,0.08);
+    border: 1px solid rgba(248,113,113,0.2);
+    border-radius: 12px; padding: 0.85rem 1rem;
+    color: #dc2626; font-size: 0.85rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+
+  .usr-table {
+    width: 100%; border-collapse: collapse;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .usr-table thead tr {
+    background: #f7faf9;
+    border-bottom: 2px solid #e8f0ec;
+  }
+
+  .usr-table thead th {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: #5a7a6e; white-space: nowrap;
+  }
+
+  .usr-fila { border-bottom: 1px solid #f0f4f2; transition: background 0.15s; }
+  .usr-fila:last-child { border-bottom: none; }
+  .usr-fila:hover { background: #f7faf9; }
+  .usr-fila td { padding: 0.85rem 1.25rem; vertical-align: middle; }
+
+  .usr-nombre-wrap { display: flex; align-items: center; gap: 0.65rem; }
+  .usr-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, #145a42, #2ecc8f);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .usr-nombre { font-size: 0.88rem; font-weight: 600; color: #1a2e26; }
+  .usr-text-muted { font-size: 0.82rem; color: #b0c4bc; }
+
+  .usr-badge {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-radius: 4px; padding: 0.2rem 0.55rem;
+    white-space: nowrap;
+  }
+
+  .usr-badge-verde  { color: #2ecc8f; background: rgba(46,204,143,0.1);  border: 1px solid rgba(46,204,143,0.2); }
+  .usr-badge-azul   { color: #60a5fa; background: rgba(96,165,250,0.1);  border: 1px solid rgba(96,165,250,0.2); }
+  .usr-badge-ambar  { color: #f59e0b; background: rgba(245,158,11,0.1);  border: 1px solid rgba(245,158,11,0.2); }
+  .usr-badge-rojo   { color: #f87171; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2); }
+  .usr-badge-gris   { color: #8aaa9a; background: rgba(90,122,110,0.08); border: 1px solid rgba(90,122,110,0.15); }
+
+  .usr-acciones { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+
+  .usr-btn {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.35rem 0.7rem; border-radius: 7px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem; font-weight: 500;
+    cursor: pointer; border: 1px solid; transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .usr-btn-verde { color: #2ecc8f; background: rgba(46,204,143,0.08); border-color: rgba(46,204,143,0.2); }
+  .usr-btn-verde:hover { background: rgba(46,204,143,0.15); }
+
+  .usr-btn-ambar { color: #f59e0b; background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.2); }
+  .usr-btn-ambar:hover { background: rgba(245,158,11,0.15); }
+
+  .usr-btn-rojo { color: #f87171; background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.2); }
+  .usr-btn-rojo:hover { background: rgba(248,113,113,0.15); }
+
+  .usr-btn-gris { color: #8aaa9a; background: rgba(90,122,110,0.06); border-color: rgba(90,122,110,0.15); }
+  .usr-btn-gris:hover { background: rgba(90,122,110,0.12); }
+</style>
+
+{% endblock %}

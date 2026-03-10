@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width: 640px; margin: 0 auto;">
+
+{% if error %}
+
+  <!-- ======= ERROR ======= -->
+  <div class="page-header" style="text-align:center;">
+    <div style="
+      width: 64px; height: 64px; margin: 0 auto 1rem;
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; color: #f87171;">
+      <i class="bi bi-x-circle"></i>
+    </div>
+    <div class="page-title" style="font-size:1.4rem;">Error al guardar</div>
+    <div class="page-desc">Ocurrió un problema al guardar la versión</div>
+  </div>
+
+  <div class="card-custom">
+    <div class="card-body-custom">
+      <div style="
+        background: rgba(248,113,113,0.08);
+        border: 1px solid rgba(248,113,113,0.2);
+        border-radius: 12px; padding: 1rem 1.1rem;
+        color: #f87171; font-size: 0.88rem;
+        display: flex; align-items: center; gap: 0.6rem;
+        margin-bottom: 1.25rem;">
+        <i class="bi bi-exclamation-circle-fill" style="font-size:1rem; flex-shrink:0;"></i>
+        Intenta de nuevo. Si el problema persiste, contacta al administrador.
+      </div>
+      <a href="/version" class="btn-generar" style="text-decoration:none;">
+        <i class="bi bi-arrow-repeat"></i> Volver a intentar
+      </a>
+      <a href="/" class="link-back">
+        <i class="bi bi-arrow-left"></i> Volver al menú
+      </a>
+    </div>
+  </div>
+
+{% else %}
+
+  <!-- ======= ÉXITO ======= -->
+  <div class="page-header" style="text-align:center;">
+    <div style="
+      width: 64px; height: 64px; margin: 0 auto 1rem;
+      background: rgba(46,204,143,0.12);
+      border: 1px solid rgba(46,204,143,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; color: #2ecc8f;
+      animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both;">
+      <i class="bi bi-check-lg"></i>
+    </div>
+    <div class="page-title" style="font-size:1.4rem;">¡Versión creada!</div>
+    <div class="page-desc">La nueva versión fue registrada exitosamente</div>
+  </div>
+
+  <!-- Folio destacado -->
+  <div class="folio-result" style="margin-bottom: 1.25rem;">
+    <div class="folio-label"><i class="bi bi-hash"></i> Nueva versión</div>
+    <div class="folio-codigo">{{ nuevo_folio }}</div>
+    <div class="folio-chip"><i class="bi bi-check-circle-fill"></i> Registrado correctamente</div>
+  </div>
+
+  <!-- Datos del documento -->
+  <div class="card-custom" style="margin-bottom: 1.25rem;">
+    <div class="card-header-custom">
+      <div class="card-header-icon"><i class="bi bi-file-text"></i></div>
+      <div>
+        <p class="card-header-title">Datos del documento</p>
+        <p class="card-header-sub">Información registrada en esta versión</p>
+      </div>
+    </div>
+    <div class="card-body-custom" style="padding: 0;">
+
+      {% set filas = [
+        ('bi-calendar3',    'Fecha',             documento.fecha),
+        ('bi-person',       'Elaboró',           documento.personal_elabora),
+        ('bi-pen',          'Firma',             documento.persona_firma),
+        ('bi-building',     'Dependencia',       documento.dependencia),
+        ('bi-send',         'Dirigido a',        documento.persona_dirigida),
+        ('bi-link-45deg',   'Oficio a responder', documento.oficio_responder or '—'),
+        ('bi-text-left',    'Asunto',            documento.asunto)
+      ] %}
+
+      {% for icono, label, valor in filas %}
+      <div style="
+        display: flex; align-items: flex-start; gap: 0.85rem;
+        padding: 0.85rem 1.5rem;
+        border-bottom: 1px solid #f0f4f2;
+        {% if loop.last %}border-bottom: none;{% endif %}">
+        <i class="bi {{ icono }}" style="color: #5a7a6e; font-size: 0.9rem; margin-top: 2px; flex-shrink:0;"></i>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size: 0.72rem; font-weight: 600; color: #8aaa9a; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.15rem;">{{ label }}</div>
+          <div style="font-size: 0.88rem; color: #1a2e26; word-break: break-word;">{{ valor }}</div>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+
+  <!-- Historial de versiones -->
+  <div class="card-custom" style="margin-bottom: 1.25rem;">
+    <div class="card-header-custom">
+      <div class="card-header-icon"><i class="bi bi-clock-history"></i></div>
+      <div>
+        <p class="card-header-title">Historial de versiones</p>
+        <p class="card-header-sub">{{ versiones | length }} versión(es) registradas</p>
+      </div>
+    </div>
+    <div class="card-body-custom" style="padding: 0;">
+
+      {% for v in versiones %}
+      <div style="
+        display: flex; align-items: center; gap: 1rem;
+        padding: 0.85rem 1.5rem;
+        border-bottom: 1px solid #f0f4f2;
+        {% if loop.last %}border-bottom: none;{% endif %}
+        {% if v['folio'] == nuevo_folio %}background: rgba(30,125,88,0.04);{% endif %}">
+
+        <!-- Indicador -->
+        <div style="
+          width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+          background: {% if v['folio'] == nuevo_folio %}#2ecc8f{% else %}#dce8e3{% endif %};
+          {% if v['folio'] == nuevo_folio %}box-shadow: 0 0 0 3px rgba(46,204,143,0.2);{% endif %}">
+        </div>
+
+        <!-- Folio -->
+        <div style="flex: 1; min-width: 0;">
+          <div style="
+            font-family: 'DM Mono', monospace;
+            font-size: 0.82rem;
+            font-weight: {% if v['folio'] == nuevo_folio %}600{% else %}400{% endif %};
+            color: {% if v['folio'] == nuevo_folio %}#145a42{% else %}#1a2e26{% endif %};
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            {{ v['folio'] }}
+          </div>
+          <div style="font-size: 0.72rem; color: #8aaa9a; margin-top: 0.1rem;">{{ v['personal_elabora'] }}</div>
+        </div>
+
+        <!-- Fecha + badge nueva -->
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
+          <span style="font-size: 0.75rem; color: #8aaa9a;">{{ v['fecha'] }}</span>
+          {% if v['folio'] == nuevo_folio %}
+          <span style="
+            font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em;
+            text-transform: uppercase; color: #2ecc8f;
+            background: rgba(46,204,143,0.1);
+            border: 1px solid rgba(46,204,143,0.25);
+            border-radius: 4px; padding: 0.1rem 0.45rem;">
+            Nueva
+          </span>
+          {% endif %}
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="card-custom">
+    <div class="card-body-custom">
+      <a href="/version" class="btn-generar" style="text-decoration:none;">
+        <i class="bi bi-arrow-repeat"></i> Actualizar otra versión
+      </a>
+      <a href="/" class="link-back">
+        <i class="bi bi-arrow-left"></i> Volver al menú
+      </a>
+    </div>
+  </div>
+
+{% endif %}
+
+</div>
+
+<style>
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+</style>
+
+{% endblock %}

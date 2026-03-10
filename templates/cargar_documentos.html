@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width: 520px; margin: 0 auto;">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-label">
+      <i class="bi bi-{{ 'easel2' if tipo_adjunto == 'presentacion' else 'file-earmark-check' }}"></i>
+      {{ 'Presentación' if tipo_adjunto == 'presentacion' else 'Acuse' }}
+    </div>
+    <div class="page-title">Cargar Link</div>
+    <div class="page-desc">Vincula el documento de OneDrive al folio</div>
+  </div>
+
+  <!-- Folio info -->
+  <div class="folio-result" style="margin-bottom: 1.25rem;">
+    <div class="folio-label"><i class="bi bi-hash"></i> Folio</div>
+    <div class="folio-codigo">{{ documento['folio'] }}</div>
+    <div class="folio-chip">
+      <i class="bi bi-{{ 'easel2' if tipo_adjunto == 'presentacion' else 'file-earmark-check' }}"></i>
+      Cargando: {{ 'Presentación' if tipo_adjunto == 'presentacion' else 'Acuse' }}
+    </div>
+  </div>
+
+  <!-- Datos del folio -->
+  <div class="card-custom" style="margin-bottom: 1.25rem;">
+    <div class="card-body-custom" style="padding: 0;">
+      {% for icono, label, valor in [
+        ('bi-tag',       'Tipo',    documento['tipo_doc']),
+        ('bi-calendar3', 'Fecha',   documento['fecha']),
+        ('bi-person',    'Elaboró', documento['personal_elabora']),
+        ('bi-text-left', 'Asunto',  documento['asunto'])
+      ] %}
+      <div style="
+        display: flex; align-items: flex-start; gap: 0.85rem;
+        padding: 0.8rem 1.5rem;
+        border-bottom: 1px solid #f0f4f2;
+        {% if loop.last %}border-bottom: none;{% endif %}">
+        <i class="bi {{ icono }}" style="color:#5a7a6e; font-size:0.9rem; margin-top:2px; flex-shrink:0;"></i>
+        <div>
+          <div style="font-size:0.7rem; font-weight:600; color:#8aaa9a; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.1rem;">{{ label }}</div>
+          <div style="font-size:0.87rem; color:#1a2e26;">{{ valor }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if guardado %}
+
+  <!-- ======= GUARDADO EXITOSO ======= -->
+  <div class="card-custom">
+    <div class="card-header-custom">
+      <div class="card-header-icon" style="background:rgba(255,255,255,0.15);">
+        <i class="bi bi-check-circle" style="color:#2ecc8f;"></i>
+      </div>
+      <div>
+        <p class="card-header-title">Documento guardado</p>
+        <p class="card-header-sub">El link fue vinculado correctamente</p>
+      </div>
+    </div>
+
+    <div class="card-body-custom" style="padding:0;">
+
+      <!-- Link -->
+      <div style="
+        display: flex; align-items: flex-start; gap: 0.85rem;
+        padding: 0.9rem 1.5rem;
+        border-bottom: 1px solid #f0f4f2;">
+        <i class="bi bi-link-45deg" style="color:#5a7a6e; font-size:0.9rem; margin-top:2px; flex-shrink:0;"></i>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:0.7rem; font-weight:600; color:#8aaa9a; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.2rem;">Link guardado</div>
+          <a href="{{ link }}" target="_blank" style="
+            font-size:0.82rem; color:#145a42; word-break:break-all;
+            display:inline-flex; align-items:center; gap:0.3rem;">
+            <i class="bi bi-box-arrow-up-right" style="flex-shrink:0;"></i>
+            {{ link }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Responsable -->
+      <div style="
+        display: flex; align-items: flex-start; gap: 0.85rem;
+        padding: 0.9rem 1.5rem;
+        border-bottom: 1px solid #f0f4f2;">
+        <i class="bi bi-person-check" style="color:#5a7a6e; font-size:0.9rem; margin-top:2px; flex-shrink:0;"></i>
+        <div>
+          <div style="font-size:0.7rem; font-weight:600; color:#8aaa9a; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.1rem;">Responsable</div>
+          <div style="font-size:0.87rem; color:#1a2e26;">{{ responsable }}</div>
+        </div>
+      </div>
+
+      <!-- Fecha -->
+      <div style="
+        display: flex; align-items: flex-start; gap: 0.85rem;
+        padding: 0.9rem 1.5rem;">
+        <i class="bi bi-clock" style="color:#5a7a6e; font-size:0.9rem; margin-top:2px; flex-shrink:0;"></i>
+        <div>
+          <div style="font-size:0.7rem; font-weight:600; color:#8aaa9a; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.1rem;">Registrado el</div>
+          <div style="font-size:0.87rem; color:#1a2e26;">{{ fecha }}</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="padding: 0 1.75rem 1.75rem;">
+      <a href="/adjuntar" class="btn-generar" style="text-decoration:none;">
+        <i class="bi bi-paperclip"></i> Cargar otro documento
+      </a>
+      <a href="/" class="link-back">
+        <i class="bi bi-arrow-left"></i> Volver al menú
+      </a>
+    </div>
+  </div>
+
+  {% else %}
+
+  <!-- ======= FORMULARIO ======= -->
+  <div class="card-custom">
+    <div class="card-header-custom">
+      <div class="card-header-icon">
+        <i class="bi bi-link-45deg"></i>
+      </div>
+      <div>
+        <p class="card-header-title">Datos del documento</p>
+        <p class="card-header-sub">Pega el link de OneDrive y selecciona el responsable</p>
+      </div>
+    </div>
+
+    <div class="card-body-custom">
+      <form action="/guardar_link" method="post">
+        <input type="hidden" name="folio" value="{{ documento['folio'] }}">
+        <input type="hidden" name="tipo_adjunto" value="{{ tipo_adjunto }}">
+
+        <div class="form-group">
+          <label class="form-label-custom">Link de OneDrive</label>
+          <input type="url" name="link" class="form-control-custom"
+                 placeholder="https://onedrive.live.com/..." required autofocus>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label-custom">Responsable</label>
+          <div class="select-wrapper">
+            <select name="responsable" class="form-select-custom" required>
+              <option value="">Seleccionar...</option>
+              <option>Ing. Alejandro Guzmán</option>
+              <option>Ing. Moisés Valencia</option>
+              <option>Ing. Joahan González</option>
+              <option>Ing. Franklin Can</option>
+              <option>Ing. Bryan Nuñez</option>
+              <option>Ing. Natalia Graniel</option>
+              <option>Mtro. Miguel Ángel López</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-generar">
+          <i class="bi bi-cloud-arrow-up"></i> Guardar documento
+        </button>
+
+      </form>
+
+      <a href="/" class="link-back">
+        <i class="bi bi-arrow-left"></i> Volver al menú
+      </a>
+    </div>
+  </div>
+
+  {% endif %}
+
+</div>
+
+{% endblock %}

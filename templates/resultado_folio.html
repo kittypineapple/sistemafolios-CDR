@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width: 620px; margin: 0 auto;">
+
+  {% if resultado %}
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-label"><i class="bi bi-file-earmark-text"></i> Resultado</div>
+    <div class="page-title">Documento encontrado</div>
+    <div class="page-desc">Detalle completo del folio</div>
+  </div>
+
+  <!-- Folio destacado -->
+  <div class="folio-result" style="margin-bottom: 1.25rem;">
+    <div class="folio-label"><i class="bi bi-hash"></i> Folio</div>
+    <div class="folio-codigo">{{ resultado['folio'] }}</div>
+    <div class="folio-chip"><i class="bi bi-tag"></i> {{ resultado['tipo_doc'] }}</div>
+  </div>
+
+  <!-- Datos del documento -->
+  <div class="card-custom" style="margin-bottom: 1.25rem;">
+    <div class="card-header-custom">
+      <div class="card-header-icon"><i class="bi bi-file-text"></i></div>
+      <div>
+        <p class="card-header-title">Datos del documento</p>
+        <p class="card-header-sub">Información registrada en el folio</p>
+      </div>
+    </div>
+    <div class="card-body-custom" style="padding: 0;">
+      <div class="info-fila">
+        <i class="bi bi-calendar3 info-icono"></i>
+        <div><div class="info-label">Fecha</div><div class="info-valor">{{ resultado['fecha'] }}</div></div>
+      </div>
+      <div class="info-fila">
+        <i class="bi bi-person info-icono"></i>
+        <div><div class="info-label">Elaboró</div><div class="info-valor">{{ resultado['personal_elabora'] }}</div></div>
+      </div>
+      <div class="info-fila">
+        <i class="bi bi-pen info-icono"></i>
+        <div><div class="info-label">Firma</div><div class="info-valor">{{ resultado['persona_firma'] }}</div></div>
+      </div>
+      <div class="info-fila">
+        <i class="bi bi-building info-icono"></i>
+        <div><div class="info-label">Dependencia</div><div class="info-valor">{{ resultado['dependencia'] }}</div></div>
+      </div>
+      <div class="info-fila">
+        <i class="bi bi-send info-icono"></i>
+        <div><div class="info-label">Dirigido a</div><div class="info-valor">{{ resultado['persona_dirigida'] }}</div></div>
+      </div>
+      <div class="info-fila">
+        <i class="bi bi-link-45deg info-icono"></i>
+        <div><div class="info-label">Oficio a responder</div><div class="info-valor">{{ resultado['oficio_responder'] or '—' }}</div></div>
+      </div>
+      <div class="info-fila info-fila-last">
+        <i class="bi bi-text-left info-icono"></i>
+        <div><div class="info-label">Asunto</div><div class="info-valor">{{ resultado['asunto'] }}</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acuse + Presentación -->
+  <div class="adj-grid" style="margin-bottom: 1.25rem;">
+
+    <div class="card-custom">
+      <div class="adj-card-body">
+        <div class="adj-icon {% if resultado['acuse'] %}adj-icon-verde{% else %}adj-icon-vacio{% endif %}">
+          <i class="bi bi-file-earmark-check"></i>
+        </div>
+        <div class="adj-title">Acuse</div>
+        {% if resultado['acuse'] %}
+          <span class="adj-badge adj-badge-verde"><i class="bi bi-check-circle-fill"></i> Disponible</span>
+          <a href="{{ resultado['acuse'] }}" target="_blank" class="adj-btn-ver adj-btn-verde">
+            <i class="bi bi-box-arrow-up-right"></i> Ver acuse
+          </a>
+        {% else %}
+          <span class="adj-badge adj-badge-vacio">Sin documento</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card-custom">
+      <div class="adj-card-body">
+        <div class="adj-icon {% if resultado['presentacion'] %}adj-icon-azul{% else %}adj-icon-vacio{% endif %}">
+          <i class="bi bi-easel2"></i>
+        </div>
+        <div class="adj-title">Presentación</div>
+        {% if resultado['presentacion'] %}
+          <span class="adj-badge adj-badge-azul"><i class="bi bi-check-circle-fill"></i> Disponible</span>
+          <a href="{{ resultado['presentacion'] }}" target="_blank" class="adj-btn-ver adj-btn-azul">
+            <i class="bi bi-box-arrow-up-right"></i> Ver presentación
+          </a>
+        {% else %}
+          <span class="adj-badge adj-badge-vacio">Sin documento</span>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Historial de versiones -->
+  {% if versiones|length > 1 %}
+  <div class="card-custom" style="margin-bottom: 1.25rem;">
+    <div class="card-header-custom">
+      <div class="card-header-icon"><i class="bi bi-clock-history"></i></div>
+      <div>
+        <p class="card-header-title">Historial de versiones</p>
+        <p class="card-header-sub">{{ versiones|length }} versión(es) registradas</p>
+      </div>
+    </div>
+    <div class="card-body-custom" style="padding: 0;">
+      {% for v in versiones %}
+      <a href="/buscar_folio_get/{{ v['folio'] }}" class="version-fila {% if v['folio'] == resultado['folio'] %}version-fila-activa{% endif %}">
+        <div class="version-dot {% if v['folio'] == resultado['folio'] %}version-dot-activa{% endif %}"></div>
+        <div class="version-info">
+          <div class="version-folio">{{ v['folio'] }}</div>
+          <div class="version-elaboro">{{ v['personal_elabora'] }}</div>
+        </div>
+        <div class="version-meta">
+          <span class="version-fecha">{{ v['fecha'] }}</span>
+          {% if v['folio'] == resultado['folio'] %}
+          <span class="version-badge">Actual</span>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% else %}
+
+  <!-- No encontrado -->
+  <div class="page-header" style="text-align:center;">
+    <div style="width:64px;height:64px;margin:0 auto 1rem;background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.75rem;color:#f87171;">
+      <i class="bi bi-search"></i>
+    </div>
+    <div class="page-title" style="font-size:1.4rem;">Folio no encontrado</div>
+    <div class="page-desc">No existe un documento con ese folio</div>
+  </div>
+
+  {% endif %}
+
+  <a href="/consulta" class="link-back">
+    <i class="bi bi-arrow-left"></i> Volver a consulta
+  </a>
+
+</div>
+
+<style>
+  .adj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .adj-card-body { padding: 1.4rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; height: 100%; }
+  .adj-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+  .adj-icon-verde { background: rgba(46,204,143,0.12); border: 1px solid rgba(46,204,143,0.25); color: #2ecc8f; }
+  .adj-icon-azul  { background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.25); color: #60a5fa; }
+  .adj-icon-vacio { background: rgba(90,122,110,0.08); border: 1px solid rgba(90,122,110,0.15); color: #5a7a6e; }
+  .adj-title { font-size: 0.88rem; font-weight: 700; color: #1a2e26; }
+  .adj-badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 4px; padding: 0.15rem 0.5rem; }
+  .adj-badge-verde { color: #2ecc8f; background: rgba(46,204,143,0.1); border: 1px solid rgba(46,204,143,0.2); }
+  .adj-badge-azul  { color: #60a5fa; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.2); }
+  .adj-badge-vacio { color: #8aaa9a; font-size: 0.75rem; font-weight: 500; text-transform: none; letter-spacing: 0; }
+  .adj-btn-ver { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; font-weight: 500; text-decoration: none; transition: all 0.2s; margin-top: auto; }
+  .adj-btn-verde { background: rgba(46,204,143,0.08); border: 1px solid rgba(46,204,143,0.2); color: #145a42; }
+  .adj-btn-azul  { background: rgba(96,165,250,0.08); border: 1px solid rgba(96,165,250,0.2); color: #1e4fa8; }
+
+  .info-fila { display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.8rem 1.5rem; border-bottom: 1px solid #f0f4f2; }
+  .info-fila-last { border-bottom: none; }
+  .info-icono { color: #5a7a6e; font-size: 0.9rem; margin-top: 2px; flex-shrink: 0; }
+  .info-label { font-size: 0.7rem; font-weight: 600; color: #8aaa9a; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.1rem; }
+  .info-valor { font-size: 0.87rem; color: #1a2e26; }
+
+  .version-fila { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.5rem; border-bottom: 1px solid #f0f4f2; text-decoration: none; transition: background 0.15s; }
+  .version-fila:last-child { border-bottom: none; }
+  .version-fila:hover { background: #f7faf9; }
+  .version-fila-activa { background: rgba(30,125,88,0.04); }
+  .version-dot { width: 8px; height: 8px; border-radius: 50%; background: #dce8e3; flex-shrink: 0; }
+  .version-dot-activa { background: #2ecc8f; box-shadow: 0 0 0 3px rgba(46,204,143,0.2); }
+  .version-info { flex: 1; min-width: 0; }
+  .version-folio { font-family: 'DM Mono', monospace; font-size: 0.82rem; color: #1a2e26; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .version-fila-activa .version-folio { font-weight: 600; color: #145a42; }
+  .version-elaboro { font-size: 0.72rem; color: #8aaa9a; margin-top: 0.1rem; }
+  .version-meta { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+  .version-fecha { font-size: 0.75rem; color: #8aaa9a; }
+  .version-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #2ecc8f; background: rgba(46,204,143,0.1); border: 1px solid rgba(46,204,143,0.25); border-radius: 4px; padding: 0.1rem 0.45rem; }
+</style>
+
+{% endblock %}

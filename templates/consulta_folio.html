@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width: 580px; margin: 0 auto;">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-label"><i class="bi bi-search"></i> Consulta</div>
+    <div class="page-title">Consulta de Folios</div>
+    <div class="page-desc">Busca documentos por asunto, tipo o folio exacto</div>
+  </div>
+
+  <div class="card-custom">
+    <div class="card-header-custom">
+      <div class="card-header-icon"><i class="bi bi-folder2-open"></i></div>
+      <div>
+        <p class="card-header-title">Opciones de búsqueda</p>
+        <p class="card-header-sub">Selecciona el método de búsqueda</p>
+      </div>
+    </div>
+
+    <div class="card-body-custom">
+
+      <!-- Buscar por palabra -->
+      <div class="consulta-seccion">
+        <div class="consulta-seccion-titulo">
+          <div class="consulta-icono consulta-icono-verde">
+            <i class="bi bi-fonts"></i>
+          </div>
+          <div>
+            <div class="consulta-label">Buscar por palabra</div>
+            <div class="consulta-sub">Busca en el asunto del documento</div>
+          </div>
+        </div>
+        <form action="/buscar_palabra" method="post" class="consulta-form">
+          <input type="text" name="palabra" class="form-control-custom"
+                 placeholder="Escribe una palabra clave..." required>
+          <button type="submit" class="btn-buscar">
+            <i class="bi bi-search"></i> Buscar
+          </button>
+        </form>
+      </div>
+
+      <div class="consulta-divider"></div>
+
+      <!-- Buscar por tipo -->
+      <div class="consulta-seccion">
+        <div class="consulta-seccion-titulo">
+          <div class="consulta-icono consulta-icono-azul">
+            <i class="bi bi-tag"></i>
+          </div>
+          <div>
+            <div class="consulta-label">Buscar por tipo</div>
+            <div class="consulta-sub">Filtra por tipo de documento</div>
+          </div>
+        </div>
+        <form action="/buscar_tipo" method="post" class="consulta-form">
+          <div class="select-wrapper" style="flex:1;">
+            <select name="tipo_doc" class="form-select-custom" required>
+              <option value="PROYECCIONES">Proyecciones</option>
+              <option value="IES">Instrucciones Especiales</option>
+              <option value="ATTRAPI">ATTRAPI</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-buscar">
+            <i class="bi bi-search"></i> Buscar
+          </button>
+        </form>
+      </div>
+
+      <div class="consulta-divider"></div>
+
+      <!-- Buscar por folio exacto -->
+      <div class="consulta-seccion">
+        <div class="consulta-seccion-titulo">
+          <div class="consulta-icono consulta-icono-ambar">
+            <i class="bi bi-hash"></i>
+          </div>
+          <div>
+            <div class="consulta-label">Buscar por folio exacto</div>
+            <div class="consulta-sub">Ingresa el folio completo</div>
+          </div>
+        </div>
+        <form action="/buscar_folio" method="post" class="consulta-form">
+          <input type="text" name="folio" class="form-control-custom"
+                 placeholder="Ej: TM-IE-2025-082-V1" required
+                 style="font-family: 'DM Mono', monospace; font-size: 0.82rem;">
+          <button type="submit" class="btn-buscar">
+            <i class="bi bi-search"></i> Buscar
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <a href="/" class="link-back">
+    <i class="bi bi-arrow-left"></i> Volver al menú
+  </a>
+
+</div>
+
+<style>
+  .consulta-seccion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding: 0.25rem 0;
+  }
+
+  .consulta-seccion-titulo {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .consulta-icono {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+
+  .consulta-icono-verde { background: rgba(46,204,143,0.12); color: #2ecc8f; border: 1px solid rgba(46,204,143,0.2); }
+  .consulta-icono-azul  { background: rgba(96,165,250,0.12); color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
+  .consulta-icono-ambar { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+
+  .consulta-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1a2e26;
+    line-height: 1.2;
+  }
+
+  .consulta-sub {
+    font-size: 0.75rem;
+    color: #8aaa9a;
+    margin-top: 0.1rem;
+  }
+
+  .consulta-form {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .consulta-form .form-control-custom,
+  .consulta-form .form-select-custom { flex: 1; }
+
+  .consulta-divider {
+    height: 1px;
+    background: #e8f0ec;
+    margin: 0.75rem 0;
+  }
+
+  .btn-buscar {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.6rem 1.1rem;
+    background: linear-gradient(135deg, #145a42, #1e7d58);
+    border: none; border-radius: 10px;
+    color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-buscar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(20,90,66,0.3);
+  }
+</style>
+
+{% endblock %}

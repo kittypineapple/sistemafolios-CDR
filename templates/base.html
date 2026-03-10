@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Sistema CDR — Tren Maya</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --verde-oscuro:  #0b3d2e;
+      --verde-medio:   #145a42;
+      --verde-claro:   #1e7d58;
+      --verde-acento:  #2ecc8f;
+      --blanco:        #f7faf9;
+      --gris-claro:    #e8f0ec;
+      --texto:         #1a2e26;
+      --texto-suave:   #5a7a6e;
+      --card-bg:       #ffffff;
+      --sombra:        0 4px 32px rgba(11,61,46,0.18);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      background: var(--verde-oscuro);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Mismo fondo que el overlay del login */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(11,61,46,0.98) 0%, rgba(6,25,18,0.99) 100%),
+        repeating-linear-gradient(
+          45deg, transparent, transparent 60px,
+          rgba(255,255,255,0.012) 60px, rgba(255,255,255,0.012) 61px
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ============ NAVBAR ============ */
+    .navbar-custom {
+      background: linear-gradient(135deg, #0b3d2e, #061912);
+      border-bottom: 1px solid rgba(46,204,143,0.15);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      height: 68px;
+      box-shadow: 0 2px 24px rgba(0,0,0,0.35);
+    }
+
+    /* línea acento superior */
+    .navbar-custom::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--verde-acento) 50%, transparent 100%);
+      opacity: 0.5;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .navbar-logo-wrap {
+      display: flex;
+      align-items: center;
+      padding-right: 1.25rem;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      height: 100%;
+    }
+
+    .navbar-logo {
+      height: 44px;
+      width: auto;
+      flex-shrink: 0;
+    }
+
+    .navbar-system-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .navbar-system-name {
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+    }
+
+    .navbar-system-sub {
+      color: rgba(255,255,255,0.4);
+      font-size: 0.67rem;
+      font-weight: 500;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .navbar-rol {
+      font-size: 0.67rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--verde-acento);
+      background: rgba(46,204,143,0.1);
+      border: 1px solid rgba(46,204,143,0.2);
+      border-radius: 4px;
+      padding: 0.2rem 0.6rem;
+    }
+
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      padding: 0.3rem 0.9rem 0.3rem 0.4rem;
+      color: rgba(255,255,255,0.85);
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--verde-medio), var(--verde-acento));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      color: #fff;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.65);
+      border-radius: 8px;
+      padding: 0.45rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-logout:hover {
+      background: rgba(46,204,143,0.12);
+      border-color: rgba(46,204,143,0.3);
+      color: var(--verde-acento);
+    }
+
+    /* ============ MAIN ============ */
+    .main-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    /* ============ PAGE HEADER ============ */
+    .page-header { margin-bottom: 2rem; animation: fadeUp 0.5s ease both; }
+
+    .page-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(46,204,143,0.1);
+      border: 1px solid rgba(46,204,143,0.22);
+      color: var(--verde-acento);
+      border-radius: 100px;
+      padding: 0.3rem 0.85rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .page-title {
+      color: #fff;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    .page-desc { color: rgba(255,255,255,0.4); font-size: 0.88rem; }
+
+    /* ============ STATS ============ */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.5s ease 0.05s both;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 1.2rem 1.25rem;
+      transition: all 0.2s;
+    }
+
+    .stat-card:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(46,204,143,0.2);
+    }
+
+    .stat-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; margin-bottom: 0.75rem;
+    }
+
+    .stat-icon.verde { background: rgba(46,204,143,0.12); color: var(--verde-acento); }
+    .stat-icon.azul  { background: rgba(59,130,246,0.12); color: #60a5fa; }
+    .stat-icon.ambar { background: rgba(245,158,11,0.12); color: #fbbf24; }
+
+    .stat-value {
+      font-size: 1.6rem; font-weight: 700; color: #fff;
+      line-height: 1; margin-bottom: 0.25rem;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+
+    /* ============ CARD ============ */
+    .card-custom {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--sombra);
+      border: none;
+      overflow: hidden;
+      animation: fadeUp 0.5s ease 0.1s both;
+    }
+
+    .card-header-custom {
+      background: linear-gradient(135deg, var(--verde-medio), var(--verde-claro));
+      padding: 1.4rem 1.75rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+
+    .card-header-icon {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.1rem;
+    }
+
+    .card-header-title { color: #fff; font-weight: 600; font-size: 1rem; margin: 0; }
+    .card-header-sub   { color: rgba(255,255,255,0.65); font-size: 0.75rem; margin: 0; }
+    .card-body-custom  { padding: 1.75rem; }
+
+    /* ============ FORM ============ */
+    .form-section { margin-bottom: 1.5rem; }
+
+    .form-section-title {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--verde-medio); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    .form-section-title::after {
+      content: ''; flex: 1; height: 1px; background: var(--gris-claro);
+    }
+
+    .form-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { margin-bottom: 1rem; }
+
+    .form-label-custom {
+      display: block; font-size: 0.78rem; font-weight: 600;
+      color: var(--texto); margin-bottom: 0.4rem;
+    }
+
+    .form-control-custom,
+    .form-select-custom {
+      width: 100%;
+      padding: 0.6rem 0.9rem;
+      border: 1.5px solid #dce8e3;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: var(--texto);
+      background: var(--blanco);
+      transition: all 0.2s;
+      outline: none;
+      appearance: none;
+    }
+
+    .form-control-custom:focus,
+    .form-select-custom:focus {
+      border-color: var(--verde-claro);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(30,125,88,0.12);
+    }
+
+    .form-control-custom::placeholder { color: #b0c4bc; }
+    textarea.form-control-custom { resize: vertical; min-height: 80px; }
+
+    .select-wrapper { position: relative; }
+    .select-wrapper::after {
+      content: '\F282'; font-family: 'bootstrap-icons';
+      position: absolute; right: 0.9rem; top: 50%;
+      transform: translateY(-50%);
+      color: var(--texto-suave); pointer-events: none; font-size: 0.85rem;
+    }
+
+    /* ============ TIPO SELECTOR ============ */
+    .tipo-selector {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem; margin-bottom: 1rem;
+    }
+
+    .tipo-option { position: relative; }
+    .tipo-option input[type="radio"] { position: absolute; opacity: 0; width: 0; }
+
+    .tipo-label {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.3rem; padding: 0.85rem 0.5rem;
+      border: 1.5px solid #dce8e3;
+      border-radius: 12px; cursor: pointer;
+      transition: all 0.2s; background: var(--blanco); text-align: center;
+    }
+
+    .tipo-label i    { font-size: 1.3rem; color: var(--texto-suave); }
+    .tipo-label span { font-size: 0.72rem; font-weight: 600; color: var(--texto-suave); line-height: 1.2; }
+
+    .tipo-option input:checked + .tipo-label {
+      border-color: var(--verde-claro);
+      background: rgba(30,125,88,0.06);
+      box-shadow: 0 0 0 3px rgba(30,125,88,0.1);
+    }
+
+    .tipo-option input:checked + .tipo-label i,
+    .tipo-option input:checked + .tipo-label span { color: var(--verde-claro); }
+
+    /* ============ BTN GENERAR ============ */
+    .btn-generar {
+      width: 100%; padding: 0.85rem;
+      background: linear-gradient(135deg, var(--verde-medio), var(--verde-claro));
+      border: none; border-radius: 12px; color: #fff;
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 0.5rem;
+      transition: all 0.25s; margin-top: 0.5rem;
+    }
+
+    .btn-generar:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(20,90,66,0.4);
+    }
+
+    /* ============ FOLIO RESULT ============ */
+    .folio-result {
+      background: linear-gradient(135deg, #061912, #0d4a37);
+      border-radius: 16px; padding: 1.5rem; text-align: center;
+      border: 1px solid rgba(46,204,143,0.2);
+      position: relative; overflow: hidden; margin-top: 1rem;
+    }
+
+    .folio-result::before {
+      content: ''; position: absolute;
+      top: -30px; right: -30px; width: 100px; height: 100px;
+      background: radial-gradient(circle, rgba(46,204,143,0.15) 0%, transparent 70%);
+    }
+
+    .folio-label {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--verde-acento); margin-bottom: 0.5rem;
+    }
+
+    .folio-codigo {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.4rem; font-weight: 500; color: #fff;
+      letter-spacing: 0.04em; margin-bottom: 0.75rem;
+    }
+
+    .folio-chip {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      background: rgba(46,204,143,0.12);
+      border: 1px solid rgba(46,204,143,0.25);
+      color: var(--verde-acento); border-radius: 100px;
+      padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 500;
+    }
+
+    /* ============ LINK BACK ============ */
+    .link-back {
+      display: inline-flex; align-items: center;
+      justify-content: center; gap: 0.5rem;
+      width: 100%; margin-top: 0.85rem; padding: 0.65rem;
+      color: var(--verde-medio); text-decoration: none;
+      font-size: 0.88rem; font-weight: 500;
+      border: 1.5px solid #dce8e3; border-radius: 12px;
+      background: var(--blanco); transition: all 0.2s;
+    }
+    .link-back:hover {
+      background: #eaf3ef;
+      border-color: var(--verde-claro);
+      color: var(--verde-claro);
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 640px) {
+      .form-row        { grid-template-columns: 1fr; }
+      .stats-row       { grid-template-columns: 1fr; }
+      .tipo-selector   { grid-template-columns: 1fr; }
+      .folio-codigo    { font-size: 1rem; }
+      .navbar-logo     { height: 34px; }
+      .navbar-system-info { display: none; }
+      .navbar-custom   { padding: 0 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar-custom">
+  <div class="navbar-left">
+    <div class="navbar-logo-wrap">
+      <img class="navbar-logo"
+           src="{{ url_for('static', filename='img/Logotipo_TM_H.png') }}"
+           alt="Tren Maya">
+    </div>
+    <div class="navbar-system-info">
+      <span class="navbar-system-name">Sistema de Folios</span>
+      <span class="navbar-system-sub">Capacidad de Red</span>
+    </div>
+  </div>
+
+  <div class="navbar-right">
+    {% if session.get('rol') %}
+    <span class="navbar-rol">{{ session.get('rol') }}</span>
+    {% endif %}
+    <div class="user-badge">
+      <div class="user-avatar">
+        {{ session.get('user', 'U')[0]|upper }}
+      </div>
+      {{ session.get('user') }}
+    </div>
+    <a href="/logout" class="btn-logout">
+      <i class="bi bi-box-arrow-right"></i> Salir
+    </a>
+  </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="main-container">
+  {% block content %}{% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width: 480px; margin: 0 auto;">
+
+  {% if folio == 'ERROR' %}
+
+  <!-- ======= ERROR ======= -->
+  <div class="page-header" style="text-align:center;">
+    <div style="
+      width: 64px; height: 64px; margin: 0 auto 1rem;
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; color: #f87171;">
+      <i class="bi bi-x-circle"></i>
+    </div>
+    <div class="page-title" style="font-size:1.4rem;">Error al generar</div>
+    <div class="page-desc">Ocurrió un problema al guardar el folio</div>
+  </div>
+
+  <div class="card-custom">
+    <div class="card-body-custom">
+      <div style="
+        background: rgba(248,113,113,0.08);
+        border: 1px solid rgba(248,113,113,0.2);
+        border-radius: 12px;
+        padding: 1rem 1.1rem;
+        color: #f87171;
+        font-size: 0.88rem;
+        display: flex; align-items: center; gap: 0.6rem;
+        margin-bottom: 1.25rem;">
+        <i class="bi bi-exclamation-circle-fill" style="font-size:1rem; flex-shrink:0;"></i>
+        Intenta de nuevo. Si el problema persiste, contacta al administrador.
+      </div>
+
+      <a href="/generar" class="btn-generar" style="text-decoration:none; margin-bottom:0.5rem;">
+        <i class="bi bi-arrow-repeat"></i> Intentar de nuevo
+      </a>
+      <a href="/" class="link-back">
+        <i class="bi bi-arrow-left"></i> Volver al menú
+      </a>
+    </div>
+  </div>
+
+  {% else %}
+
+  <!-- ======= ÉXITO ======= -->
+  <div class="page-header" style="text-align:center;">
+    <div style="
+      width: 64px; height: 64px; margin: 0 auto 1rem;
+      background: rgba(46,204,143,0.12);
+      border: 1px solid rgba(46,204,143,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; color: #2ecc8f;
+      animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both;">
+      <i class="bi bi-check-lg"></i>
+    </div>
+    <div class="page-title" style="font-size:1.4rem;">¡Folio generado!</div>
+    <div class="page-desc">El folio fue registrado exitosamente</div>
+  </div>
+
+  <div class="card-custom">
+    <div class="card-header-custom">
+      <div class="card-header-icon"><i class="bi bi-file-earmark-check"></i></div>
+      <div>
+        <p class="card-header-title">Detalles del folio</p>
+        <p class="card-header-sub">Guarda esta información para tu referencia</p>
+      </div>
+    </div>
+
+    <div class="card-body-custom">
+
+      <!-- Folio destacado -->
+      <div class="folio-result" style="margin-top:0; margin-bottom:1.25rem;">
+        <div class="folio-label"><i class="bi bi-hash"></i> Folio oficial</div>
+        <div class="folio-codigo">{{ folio }}</div>
+        <div class="folio-chip"><i class="bi bi-check-circle-fill"></i> Registrado correctamente</div>
+      </div>
+
+      <!-- Info del documento -->
+      <div style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.5rem;">
+
+        <div style="
+          display:flex; align-items:center; justify-content:space-between;
+          padding: 0.7rem 0.9rem;
+          background: #f7faf9;
+          border-radius: 10px;
+          border: 1px solid #e8f0ec;">
+          <span style="font-size:0.78rem; font-weight:600; color:#5a7a6e;">
+            <i class="bi bi-tag" style="margin-right:0.4rem;"></i>Tipo
+          </span>
+          <span style="font-size:0.85rem; font-weight:600; color:#1a2e26;">{{ tipo_doc }}</span>
+        </div>
+
+        <div style="
+          display:flex; align-items:center; justify-content:space-between;
+          padding: 0.7rem 0.9rem;
+          background: #f7faf9;
+          border-radius: 10px;
+          border: 1px solid #e8f0ec;">
+          <span style="font-size:0.78rem; font-weight:600; color:#5a7a6e;">
+            <i class="bi bi-building" style="margin-right:0.4rem;"></i>Dependencia
+          </span>
+          <span style="font-size:0.85rem; font-weight:600; color:#1a2e26;">{{ dependencia }}</span>
+        </div>
+
+      </div>
+
+      <!-- Acciones -->
+      <a href="/generar" class="btn-generar" style="text-decoration:none;">
+        <i class="bi bi-file-earmark-plus"></i> Generar otro folio
+      </a>
+      <a href="/" class="link-back">
+        <i class="bi bi-arrow-left"></i> Volver al menú
+      </a>
+
+    </div>
+  </div>
+
+  {% endif %}
+
+</div>
+
+<style>
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+</style>
+
+{% endblock %}
