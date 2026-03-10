@@ -2,8 +2,8 @@ import sqlite3
 import os
 from datetime import datetime, timezone, timedelta
 
-
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "folios.db")
+os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
 
 
 def get_fecha_mexico():
